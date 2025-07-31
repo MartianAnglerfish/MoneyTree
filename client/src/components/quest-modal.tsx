@@ -28,6 +28,9 @@ export function QuestModal({ isOpen, onClose, questId, userId, onComplete }: Que
   const [score, setScore] = useState(0);
   const [startTime, setStartTime] = useState<Date | null>(null);
   const [auricMessage, setAuricMessage] = useState(getRandomAuricMessage('educational'));
+  const [showAnswerFeedback, setShowAnswerFeedback] = useState(false);
+  const [isAnswerCorrect, setIsAnswerCorrect] = useState(false);
+  const [answerExplanation, setAnswerExplanation] = useState("");
 
   const queryClient = useQueryClient();
 
@@ -118,9 +121,32 @@ export function QuestModal({ isOpen, onClose, questId, userId, onComplete }: Que
     const newAnswers = { ...userAnswers, [currentQuestion.id]: selectedAnswer };
     setUserAnswers(newAnswers);
 
+    // Check if answer is correct and show feedback
+    const correct = selectedAnswer === currentQuestion.correctAnswer;
+    setIsAnswerCorrect(correct);
+    setAnswerExplanation(currentQuestion.explanation);
+    setShowAnswerFeedback(true);
+
+    // Update Auric message based on answer
+    if (correct) {
+      setAuricMessage({
+        id: `correct-${currentQuestion.id}`,
+        content: "🎉 Excellent work, brave treasure hunter! You've got the wisdom of a master dragon! Your hoard grows stronger with each correct answer! ✨🐲💰",
+        category: 'celebration',
+        context: 'correct_answer'
+      });
+    } else {
+      setAuricMessage({
+        id: `incorrect-${currentQuestion.id}`,
+        content: "Don't worry, even the mightiest dragons learn from their mistakes! Every wrong turn teaches us the right path. Keep going, you're building wisdom! 🐲💪",
+        category: 'motivational',
+        context: 'incorrect_answer'
+      });
+    }
+
     // Calculate score
     let newScore = score;
-    if (selectedAnswer === currentQuestion.correctAnswer) {
+    if (correct) {
       newScore += 10; // 10 points per correct answer
       setScore(newScore);
     }
@@ -133,20 +159,24 @@ export function QuestModal({ isOpen, onClose, questId, userId, onComplete }: Que
         answers: newAnswers,
       });
     }
+  };
 
+  const handleContinueAfterFeedback = async () => {
+    setShowAnswerFeedback(false);
+    
     // Check if this is the last question
-    if (currentQuestionIndex === quest.questions.length - 1) {
+    if (currentQuestionIndex === quest!.questions.length - 1) {
       // Complete the quest
       const timeSpent = startTime ? Math.floor((new Date().getTime() - startTime.getTime()) / 1000) : 0;
       
       if (questId) {
         await completeQuestMutation.mutateAsync({
           questId,
-          score: newScore,
+          score,
           timeSpent,
         });
 
-        onComplete(questId, newScore, quest.xpReward, quest.coinReward);
+        onComplete(questId, score, quest!.xpReward, quest!.coinReward);
       }
       
       handleClose();
@@ -156,6 +186,19 @@ export function QuestModal({ isOpen, onClose, questId, userId, onComplete }: Que
     // Move to next question
     setCurrentQuestionIndex(prev => prev + 1);
     setSelectedAnswer("");
+    
+    // Reset to next question's hint if available
+    const nextQuestion = quest!.questions[currentQuestionIndex + 1];
+    if (nextQuestion?.auricHint) {
+      setAuricMessage({
+        id: `hint-${nextQuestion.id}`,
+        content: nextQuestion.auricHint,
+        category: 'educational',
+        context: 'question_hint'
+      });
+    } else {
+      setAuricMessage(getRandomAuricMessage('educational'));
+    }
   };
 
   const handlePreviousQuestion = () => {
@@ -200,6 +243,9 @@ export function QuestModal({ isOpen, onClose, questId, userId, onComplete }: Que
     setSeenEducationalSections(new Set());
     setScore(0);
     setStartTime(null);
+    setShowAnswerFeedback(false);
+    setIsAnswerCorrect(false);
+    setAnswerExplanation("");
     onClose();
   };
 
@@ -228,11 +274,22 @@ export function QuestModal({ isOpen, onClose, questId, userId, onComplete }: Que
           </div>
         </DialogHeader>
 
-        <div className="space-y-6">
+        <div className="space-y-6 relative">
+          {/* Floating decorative elements */}
+          <div className="absolute inset-0 pointer-events-none overflow-hidden">
+            <div className="absolute top-4 left-8 w-2 h-2 bg-amber-400 rounded-full animate-twinkle opacity-60"></div>
+            <div className="absolute top-12 right-12 w-1.5 h-1.5 bg-emerald-400 rounded-full animate-twinkle opacity-40" style={{animationDelay: '0.5s'}}></div>
+            <div className="absolute top-20 left-16 w-1 h-1 bg-blue-400 rounded-full animate-twinkle opacity-50" style={{animationDelay: '1s'}}></div>
+            <div className="absolute top-8 right-20 w-1.5 h-1.5 bg-purple-400 rounded-full animate-twinkle opacity-45" style={{animationDelay: '1.5s'}}></div>
+            <div className="absolute top-16 right-6 w-1 h-1 bg-pink-400 rounded-full animate-twinkle opacity-55" style={{animationDelay: '2s'}}></div>
+            <div className="absolute top-6 left-24 w-1.5 h-1.5 bg-cyan-400 rounded-full animate-twinkle opacity-50" style={{animationDelay: '2.5s'}}></div>
+          </div>
+
           {/* Educational Content Section */}
           {showEducationalContent && currentEducationalSection && (
-            <Card className="bg-gradient-to-r from-primary/10 to-secondary/10 border-primary/20">
-              <CardContent className="p-6">
+            <Card className="bg-gradient-to-r from-primary/10 to-secondary/10 border-primary/20 shadow-lg relative overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/5 to-amber-500/5"></div>
+              <CardContent className="p-6 relative">
                 <div className="flex items-start space-x-4">
                   {/* Auric Avatar */}
                   <div className="w-12 h-12 bg-gradient-to-br from-emerald-500/20 to-amber-500/20 rounded-full flex items-center justify-center flex-shrink-0 relative">
@@ -242,6 +299,7 @@ export function QuestModal({ isOpen, onClose, questId, userId, onComplete }: Que
                       className="w-10 h-10 object-contain" 
                     />
                     <div className="absolute -top-1 -right-1 w-3 h-3 bg-amber-400 rounded-full animate-ping"></div>
+                    <div className="absolute -bottom-1 -left-1 w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></div>
                   </div>
                   <div className="flex-1">
                     <div className="bg-card/80 rounded-lg p-4 relative">
@@ -302,17 +360,69 @@ export function QuestModal({ isOpen, onClose, questId, userId, onComplete }: Que
             </Card>
           )}
 
+          {/* Answer Feedback Section */}
+          {showAnswerFeedback && (
+            <Card className={`${isAnswerCorrect ? 'bg-gradient-to-r from-emerald-50 to-green-50 border-emerald-200' : 'bg-gradient-to-r from-orange-50 to-red-50 border-orange-200'} shadow-lg relative overflow-hidden`}>
+              <div className="absolute inset-0 pointer-events-none">
+                {isAnswerCorrect && (
+                  <>
+                    <div className="absolute top-2 right-2 w-3 h-3 bg-emerald-400 rounded-full animate-bounce"></div>
+                    <div className="absolute top-6 right-8 w-2 h-2 bg-green-400 rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
+                    <div className="absolute top-4 right-12 w-1.5 h-1.5 bg-emerald-500 rounded-full animate-bounce" style={{animationDelay: '0.4s'}}></div>
+                  </>
+                )}
+              </div>
+              <CardContent className="p-6 relative">
+                <div className="flex items-start space-x-4">
+                  <div className={`w-16 h-16 rounded-full flex items-center justify-center flex-shrink-0 relative ${isAnswerCorrect ? 'bg-gradient-to-br from-emerald-500/20 to-green-500/20' : 'bg-gradient-to-br from-orange-500/20 to-red-500/20'}`}>
+                    <div className="text-3xl">
+                      {isAnswerCorrect ? '🎉' : '🤔'}
+                    </div>
+                    {isAnswerCorrect && (
+                      <div className="absolute -top-1 -right-1 w-4 h-4 bg-emerald-400 rounded-full animate-ping"></div>
+                    )}
+                  </div>
+                  <div className="flex-1">
+                    <div className={`rounded-lg p-4 relative ${isAnswerCorrect ? 'bg-emerald-100/50' : 'bg-orange-100/50'}`}>
+                      <h3 className={`font-bold text-lg mb-2 ${isAnswerCorrect ? 'text-emerald-700' : 'text-orange-700'}`}>
+                        {isAnswerCorrect ? '✅ Correct!' : '❌ Not quite right'}
+                      </h3>
+                      <p className="text-sm mb-4 text-gray-700">{answerExplanation}</p>
+                      
+                      {/* Auric's Feedback */}
+                      <div className={`p-3 rounded-lg ${isAnswerCorrect ? 'bg-emerald-200/50' : 'bg-orange-200/50'}`}>
+                        <div className="flex items-center space-x-2 mb-2">
+                          <img 
+                            src={auricDragonImage} 
+                            alt="Auric" 
+                            className="w-6 h-6 object-contain" 
+                          />
+                          <span className="font-medium text-sm">Auric says:</span>
+                        </div>
+                        <p className="text-sm italic">{auricMessage.content}</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
           {/* Question Section */}
-          {!showEducationalContent && (
+          {!showEducationalContent && !showAnswerFeedback && (
             <div className="space-y-6">
               <div>
-                <h3 className="text-xl font-semibold mb-4">{currentQuestion.question}</h3>
+                <h3 className="text-xl font-semibold mb-4 relative">
+                  {currentQuestion.question}
+                  <div className="absolute -top-2 -right-2 w-1.5 h-1.5 bg-primary rounded-full animate-twinkle"></div>
+                </h3>
                 
                 {/* Answer Options */}
                 <RadioGroup value={selectedAnswer} onValueChange={setSelectedAnswer}>
                   <div className="space-y-3">
                     {currentQuestion.options.map((option) => (
-                      <div key={option.id} className="flex items-start space-x-3 p-4 border border-border rounded-lg hover:border-primary/50 hover:bg-primary/5 cursor-pointer transition-all">
+                      <div key={option.id} className="flex items-start space-x-3 p-4 border border-border rounded-lg hover:border-primary/50 hover:bg-primary/5 cursor-pointer transition-all relative overflow-hidden">
+                        <div className="absolute top-2 right-2 w-1 h-1 bg-primary/30 rounded-full animate-twinkle opacity-60"></div>
                         <RadioGroupItem value={option.id} id={option.id} className="mt-1" />
                         <Label htmlFor={option.id} className="flex-1 cursor-pointer">
                           <span className="font-medium">{option.text}</span>
@@ -325,7 +435,8 @@ export function QuestModal({ isOpen, onClose, questId, userId, onComplete }: Que
               </div>
 
               {/* Auric Encouragement */}
-              <Card className="bg-primary/5 border-primary/20">
+              <Card className="bg-primary/5 border-primary/20 relative overflow-hidden">
+                <div className="absolute top-2 right-2 w-1.5 h-1.5 bg-amber-400 rounded-full animate-pulse"></div>
                 <CardContent className="p-4">
                   <div className="flex items-center space-x-3">
                     <div className="w-8 h-8 bg-gradient-to-br from-emerald-500/20 to-amber-500/20 rounded-full flex items-center justify-center relative">
@@ -334,6 +445,7 @@ export function QuestModal({ isOpen, onClose, questId, userId, onComplete }: Que
                         alt="Auric" 
                         className="w-6 h-6 object-contain" 
                       />
+                      <div className="absolute -top-1 -right-1 w-2 h-2 bg-amber-400 rounded-full animate-ping opacity-70"></div>
                     </div>
                     <div className="flex-1">
                       <p className="text-sm italic text-primary">"{auricMessage.content}" - Auric</p>
@@ -345,12 +457,16 @@ export function QuestModal({ isOpen, onClose, questId, userId, onComplete }: Que
           )}
 
           {/* Action Buttons */}
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between relative">
+            {/* Decorative sparkles around buttons */}
+            <div className="absolute -top-2 left-4 w-1 h-1 bg-amber-400 rounded-full animate-twinkle opacity-60"></div>
+            <div className="absolute -bottom-2 right-8 w-1.5 h-1.5 bg-emerald-400 rounded-full animate-twinkle opacity-50" style={{animationDelay: '1s'}}></div>
+            
             <Button 
               onClick={handlePreviousQuestion}
               variant="outline"
-              disabled={currentQuestionIndex === 0}
-              className="flex items-center space-x-2"
+              disabled={currentQuestionIndex === 0 || showAnswerFeedback}
+              className="flex items-center space-x-2 relative overflow-hidden"
             >
               <span>←</span>
               <span>Previous</span>
@@ -365,9 +481,18 @@ export function QuestModal({ isOpen, onClose, questId, userId, onComplete }: Que
                     const sectionIndex = currentQuestionIndex === 0 ? 0 : 1;
                     setSeenEducationalSections(prev => new Set(prev).add(sectionIndex));
                   }}
-                  className="bg-primary hover:bg-primary/90 text-primary-foreground px-6 py-2 rounded-lg font-medium"
+                  className="bg-primary hover:bg-primary/90 text-primary-foreground px-6 py-2 rounded-lg font-medium relative overflow-hidden"
                 >
+                  <div className="absolute top-1 right-1 w-1 h-1 bg-white/40 rounded-full animate-pulse"></div>
                   Continue to Question
+                </Button>
+              ) : showAnswerFeedback ? (
+                <Button 
+                  onClick={handleContinueAfterFeedback}
+                  className="bg-primary hover:bg-primary/90 text-primary-foreground px-6 py-2 rounded-lg font-medium relative overflow-hidden"
+                >
+                  <div className="absolute top-1 right-1 w-1 h-1 bg-white/40 rounded-full animate-pulse"></div>
+                  {currentQuestionIndex === quest.questions.length - 1 ? 'Complete Quest' : 'Continue'}
                 </Button>
               ) : (
                 <>
@@ -381,9 +506,10 @@ export function QuestModal({ isOpen, onClose, questId, userId, onComplete }: Que
                   <Button 
                     onClick={handleAnswerSubmit}
                     disabled={!selectedAnswer}
-                    className="bg-primary hover:bg-primary/90 text-primary-foreground px-6 py-2 rounded-lg font-medium"
+                    className="bg-primary hover:bg-primary/90 text-primary-foreground px-6 py-2 rounded-lg font-medium relative overflow-hidden"
                   >
-                    {currentQuestionIndex === quest.questions.length - 1 ? 'Complete Quest' : 'Submit Answer'}
+                    <div className="absolute top-1 right-1 w-1 h-1 bg-white/40 rounded-full animate-pulse"></div>
+                    Submit Answer
                   </Button>
                 </>
               )}
