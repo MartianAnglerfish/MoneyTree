@@ -105,11 +105,11 @@ export default function Dashboard() {
       <header className="bg-card border-b border-border px-6 py-4">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center space-x-3">
-            <div className="w-12 h-12 bg-gradient-to-br from-emerald-500/20 to-amber-500/20 rounded-full flex items-center justify-center relative">
+            <div className="w-12 h-12 rounded-full flex items-center justify-center relative overflow-hidden">
               <img 
-                src="/attached_assets/auric_logo.png" 
+                src="/auric_logo_navy.png" 
                 alt="Auric - MoneyTree Mascot" 
-                className="w-10 h-10 object-contain" 
+                className="w-12 h-12 object-cover rounded-full" 
               />
               <div className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-amber-400 rounded-full animate-pulse"></div>
             </div>
