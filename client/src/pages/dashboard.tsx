@@ -105,8 +105,13 @@ export default function Dashboard() {
       <header className="bg-card border-b border-border px-6 py-4">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center">
-              <span className="text-primary-foreground font-bold text-lg">MT</span>
+            <div className="w-12 h-12 bg-gradient-to-br from-emerald-500/20 to-amber-500/20 rounded-full flex items-center justify-center relative">
+              <img 
+                src="/attached_assets/DRAGON_1_1753840736082_1753972723734_1753975794455.png" 
+                alt="Auric - MoneyTree Mascot" 
+                className="w-10 h-10 object-contain" 
+              />
+              <div className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-amber-400 rounded-full animate-pulse"></div>
             </div>
             <div>
               <h1 className="text-xl font-bold">MoneyTree</h1>
