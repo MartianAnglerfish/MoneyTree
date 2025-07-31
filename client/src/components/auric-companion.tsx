@@ -57,7 +57,7 @@ export function AuricCompanion({ className }: AuricCompanionProps) {
       <CardContent className="p-6">
         <div className="text-center mb-4">
           {/* Auric Dragon Character */}
-          <div className="relative mx-auto w-40 h-40 mb-4">
+          <div className="relative mx-auto w-56 h-56 mb-4">
             <div className={`relative w-full h-full transition-transform duration-500 ${isAnimating ? 'animate-bounce' : 'animate-bounce-slow'}`}>
               <img 
                 src={auricDragonImage} 

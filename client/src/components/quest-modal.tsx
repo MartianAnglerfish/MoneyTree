@@ -292,11 +292,11 @@ export function QuestModal({ isOpen, onClose, questId, userId, onComplete }: Que
               <CardContent className="p-6 relative">
                 <div className="flex items-start space-x-4">
                   {/* Auric Avatar */}
-                  <div className="w-12 h-12 bg-gradient-to-br from-emerald-500/20 to-amber-500/20 rounded-full flex items-center justify-center flex-shrink-0 relative">
+                  <div className="w-16 h-16 bg-gradient-to-br from-emerald-500/20 to-amber-500/20 rounded-full flex items-center justify-center flex-shrink-0 relative">
                     <img 
                       src={auricDragonImage} 
                       alt="Auric" 
-                      className="w-10 h-10 object-contain" 
+                      className="w-14 h-14 object-contain" 
                     />
                     <div className="absolute -top-1 -right-1 w-3 h-3 bg-amber-400 rounded-full animate-ping"></div>
                     <div className="absolute -bottom-1 -left-1 w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></div>
@@ -374,8 +374,8 @@ export function QuestModal({ isOpen, onClose, questId, userId, onComplete }: Que
               </div>
               <CardContent className="p-6 relative">
                 <div className="flex items-start space-x-4">
-                  <div className={`w-16 h-16 rounded-full flex items-center justify-center flex-shrink-0 relative ${isAnswerCorrect ? 'bg-gradient-to-br from-emerald-500/20 to-green-500/20' : 'bg-gradient-to-br from-orange-500/20 to-red-500/20'}`}>
-                    <div className="text-3xl">
+                  <div className={`w-20 h-20 rounded-full flex items-center justify-center flex-shrink-0 relative ${isAnswerCorrect ? 'bg-gradient-to-br from-emerald-500/20 to-green-500/20' : 'bg-gradient-to-br from-orange-500/20 to-red-500/20'}`}>
+                    <div className="text-4xl">
                       {isAnswerCorrect ? '🎉' : '🤔'}
                     </div>
                     {isAnswerCorrect && (
@@ -395,7 +395,7 @@ export function QuestModal({ isOpen, onClose, questId, userId, onComplete }: Que
                           <img 
                             src={auricDragonImage} 
                             alt="Auric" 
-                            className="w-6 h-6 object-contain" 
+                            className="w-8 h-8 object-contain" 
                           />
                           <span className="font-medium text-sm text-black">Auric says:</span>
                         </div>
@@ -439,11 +439,11 @@ export function QuestModal({ isOpen, onClose, questId, userId, onComplete }: Que
                 <div className="absolute top-2 right-2 w-1.5 h-1.5 bg-amber-400 rounded-full animate-pulse"></div>
                 <CardContent className="p-4">
                   <div className="flex items-center space-x-3">
-                    <div className="w-8 h-8 bg-gradient-to-br from-emerald-500/20 to-amber-500/20 rounded-full flex items-center justify-center relative">
+                    <div className="w-10 h-10 bg-gradient-to-br from-emerald-500/20 to-amber-500/20 rounded-full flex items-center justify-center relative">
                       <img 
                         src={auricDragonImage} 
                         alt="Auric" 
-                        className="w-6 h-6 object-contain" 
+                        className="w-8 h-8 object-contain" 
                       />
                       <div className="absolute -top-1 -right-1 w-2 h-2 bg-amber-400 rounded-full animate-ping opacity-70"></div>
                     </div>
