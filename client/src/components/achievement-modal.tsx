@@ -2,6 +2,7 @@ import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { getRandomAuricMessage } from "@/lib/auric-data";
+import auricDragonImage from "@assets/DRAGON_1_1753840736082_1753972723734_1753975956129.png";
 
 interface AchievementModalProps {
   isOpen: boolean;
@@ -68,8 +69,13 @@ export function AchievementModal({
           <Card className="bg-primary/10 border-primary/20 mb-6">
             <CardContent className="p-4">
               <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 bg-primary/20 rounded-full flex items-center justify-center animate-wiggle text-xl">
-                  🐲
+                <div className="w-10 h-10 bg-gradient-to-br from-emerald-500/20 to-amber-500/20 rounded-full flex items-center justify-center animate-wiggle relative">
+                  <img 
+                    src={auricDragonImage} 
+                    alt="Auric" 
+                    className="w-8 h-8 object-contain" 
+                  />
+                  <div className="absolute -top-1 -right-1 w-2 h-2 bg-amber-400 rounded-full animate-ping"></div>
                 </div>
                 <div className="flex-1 text-left">
                   <p className="text-sm italic text-primary">"{celebrationMessage.content}"</p>

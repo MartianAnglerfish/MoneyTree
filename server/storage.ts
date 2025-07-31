@@ -304,12 +304,13 @@ export class MemStorage implements IStorage {
     const user: User = { 
       ...insertUser, 
       id,
-      coins: 0,
-      xp: 0,
-      level: 1,
-      streak: 0,
+      coins: insertUser.coins || 0,
+      xp: insertUser.xp || 0,
+      level: insertUser.level || 1,
+      streak: insertUser.streak || 0,
       lastActiveDate: new Date(),
       createdAt: new Date(),
+      email: insertUser.email || null,
     };
     this.users.set(id, user);
     return user;
@@ -339,6 +340,12 @@ export class MemStorage implements IStorage {
       ...insertQuest, 
       id,
       createdAt: new Date(),
+      difficulty: insertQuest.difficulty || 1,
+      estimatedMinutes: insertQuest.estimatedMinutes || 15,
+      xpReward: insertQuest.xpReward || 100,
+      coinReward: insertQuest.coinReward || 25,
+      isActive: insertQuest.isActive ?? true,
+      educationalContent: insertQuest.educationalContent || null,
     };
     this.quests.set(id, quest);
     return quest;
@@ -368,6 +375,12 @@ export class MemStorage implements IStorage {
         ...insertProgress, 
         id,
         startedAt: new Date(),
+        isCompleted: insertProgress.isCompleted ?? false,
+        currentQuestion: insertProgress.currentQuestion || 0,
+        score: insertProgress.score || 0,
+        timeSpent: insertProgress.timeSpent || 0,
+        answers: insertProgress.answers || null,
+        completedAt: insertProgress.completedAt || null,
       };
       this.userProgress.set(id, progress);
       return progress;
@@ -390,9 +403,9 @@ export class MemStorage implements IStorage {
       const user = this.users.get(userId);
       if (user) {
         await this.updateUser(userId, {
-          xp: user.xp + quest.xpReward,
-          coins: user.coins + quest.coinReward,
-          level: Math.floor((user.xp + quest.xpReward) / 250) + 1,
+          xp: (user.xp || 0) + (quest.xpReward || 0),
+          coins: (user.coins || 0) + (quest.coinReward || 0),
+          level: Math.floor(((user.xp || 0) + (quest.xpReward || 0)) / 250) + 1,
         });
       }
     }
@@ -429,8 +442,8 @@ export class MemStorage implements IStorage {
       const user = this.users.get(userId);
       if (user) {
         await this.updateUser(userId, {
-          xp: user.xp + achievement.xpReward,
-          coins: user.coins + achievement.coinReward,
+          xp: (user.xp || 0) + (achievement.xpReward || 0),
+          coins: (user.coins || 0) + (achievement.coinReward || 0),
         });
       }
     }

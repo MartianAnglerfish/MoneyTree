@@ -9,6 +9,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { getRandomAuricMessage } from "@/lib/auric-data";
 import { questDatabase, type QuestData, type QuestionData, type EducationalSection } from "@/lib/quest-data";
+import auricDragonImage from "@assets/DRAGON_1_1753840736082_1753972723734_1753975956129.png";
 
 interface QuestModalProps {
   isOpen: boolean;
@@ -208,8 +209,13 @@ export function QuestModal({ isOpen, onClose, questId, userId, onComplete }: Que
               <CardContent className="p-6">
                 <div className="flex items-start space-x-4">
                   {/* Auric Avatar */}
-                  <div className="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center flex-shrink-0 text-2xl">
-                    🐲
+                  <div className="w-12 h-12 bg-gradient-to-br from-emerald-500/20 to-amber-500/20 rounded-full flex items-center justify-center flex-shrink-0 relative">
+                    <img 
+                      src={auricDragonImage} 
+                      alt="Auric" 
+                      className="w-10 h-10 object-contain" 
+                    />
+                    <div className="absolute -top-1 -right-1 w-3 h-3 bg-amber-400 rounded-full animate-ping"></div>
                   </div>
                   <div className="flex-1">
                     <div className="bg-card/80 rounded-lg p-4 relative">
@@ -296,8 +302,12 @@ export function QuestModal({ isOpen, onClose, questId, userId, onComplete }: Que
               <Card className="bg-primary/5 border-primary/20">
                 <CardContent className="p-4">
                   <div className="flex items-center space-x-3">
-                    <div className="w-8 h-8 bg-primary/20 rounded-full flex items-center justify-center text-sm">
-                      🐲
+                    <div className="w-8 h-8 bg-gradient-to-br from-emerald-500/20 to-amber-500/20 rounded-full flex items-center justify-center relative">
+                      <img 
+                        src={auricDragonImage} 
+                        alt="Auric" 
+                        className="w-6 h-6 object-contain" 
+                      />
                     </div>
                     <div className="flex-1">
                       <p className="text-sm italic text-primary">"{auricMessage.content}" - Auric</p>

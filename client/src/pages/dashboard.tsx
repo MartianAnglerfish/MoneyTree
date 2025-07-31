@@ -72,7 +72,9 @@ export default function Dashboard() {
   };
 
   const getAchievementProgress = (achievementId: string) => {
-    const userAchievement = userAchievements.find((ua: any) => ua.achievementId === achievementId);
+    const userAchievement = Array.isArray(userAchievements) ? 
+      userAchievements.find((ua: any) => ua.achievementId === achievementId) : 
+      null;
     if (userAchievement) return 100;
     
     // Mock progress calculation based on category completion
