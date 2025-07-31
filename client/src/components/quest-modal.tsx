@@ -397,9 +397,9 @@ export function QuestModal({ isOpen, onClose, questId, userId, onComplete }: Que
                             alt="Auric" 
                             className="w-6 h-6 object-contain" 
                           />
-                          <span className="font-medium text-sm">Auric says:</span>
+                          <span className="font-medium text-sm text-black">Auric says:</span>
                         </div>
-                        <p className="text-sm italic">{auricMessage.content}</p>
+                        <p className="text-sm italic text-black">{auricMessage.content}</p>
                       </div>
                     </div>
                   </div>
@@ -448,7 +448,7 @@ export function QuestModal({ isOpen, onClose, questId, userId, onComplete }: Que
                       <div className="absolute -top-1 -right-1 w-2 h-2 bg-amber-400 rounded-full animate-ping opacity-70"></div>
                     </div>
                     <div className="flex-1">
-                      <p className="text-sm italic text-primary">"{auricMessage.content}" - Auric</p>
+                      <p className="text-sm italic text-black">"{auricMessage.content}" - Auric</p>
                     </div>
                   </div>
                 </CardContent>
