@@ -24,6 +24,7 @@ export function QuestModal({ isOpen, onClose, questId, userId, onComplete }: Que
   const [selectedAnswer, setSelectedAnswer] = useState<string>("");
   const [userAnswers, setUserAnswers] = useState<Record<number, string>>({});
   const [showEducationalContent, setShowEducationalContent] = useState(true);
+  const [seenEducationalSections, setSeenEducationalSections] = useState<Set<number>>(new Set());
   const [score, setScore] = useState(0);
   const [startTime, setStartTime] = useState<Date | null>(null);
   const [auricMessage, setAuricMessage] = useState(getRandomAuricMessage('educational'));
@@ -32,7 +33,26 @@ export function QuestModal({ isOpen, onClose, questId, userId, onComplete }: Que
 
   const quest: QuestData | undefined = questId ? questDatabase[questId] : undefined;
   const currentQuestion: QuestionData | undefined = quest?.questions[currentQuestionIndex];
-  const currentEducationalSection: EducationalSection | undefined = quest?.educationalSections[Math.floor(currentQuestionIndex / 3)];
+  
+  // Show educational content only at the beginning (section 0) and middle (section 1)
+  const getEducationalSection = (): EducationalSection | undefined => {
+    if (!quest?.educationalSections) return undefined;
+    
+    // Show first educational section at the beginning
+    if (currentQuestionIndex === 0 && !seenEducationalSections.has(0)) {
+      return quest.educationalSections[0];
+    }
+    
+    // Show second educational section at the middle of the quest
+    const middleIndex = Math.floor(quest.questions.length / 2);
+    if (currentQuestionIndex === middleIndex && !seenEducationalSections.has(1) && quest.educationalSections[1]) {
+      return quest.educationalSections[1];
+    }
+    
+    return undefined;
+  };
+  
+  const currentEducationalSection = getEducationalSection();
 
   // Update progress mutation
   const updateProgressMutation = useMutation({
@@ -72,6 +92,14 @@ export function QuestModal({ isOpen, onClose, questId, userId, onComplete }: Que
       }
     }
   }, [isOpen, questId, startTime]);
+
+  // Update educational content visibility based on current position
+  useEffect(() => {
+    const shouldShowEducational = currentEducationalSection && !seenEducationalSections.has(
+      currentQuestionIndex === 0 ? 0 : 1
+    );
+    setShowEducationalContent(shouldShowEducational || false);
+  }, [currentQuestionIndex, currentEducationalSection, seenEducationalSections]);
 
   useEffect(() => {
     if (currentQuestion?.auricHint) {
@@ -128,14 +156,12 @@ export function QuestModal({ isOpen, onClose, questId, userId, onComplete }: Que
     // Move to next question
     setCurrentQuestionIndex(prev => prev + 1);
     setSelectedAnswer("");
-    setShowEducationalContent(true);
   };
 
   const handlePreviousQuestion = () => {
     if (currentQuestionIndex > 0) {
       setCurrentQuestionIndex(prev => prev - 1);
       setSelectedAnswer(userAnswers[quest?.questions[currentQuestionIndex - 1]?.id] || "");
-      setShowEducationalContent(false);
     }
   };
 
@@ -164,7 +190,6 @@ export function QuestModal({ isOpen, onClose, questId, userId, onComplete }: Que
 
     setCurrentQuestionIndex(prev => prev + 1);
     setSelectedAnswer("");
-    setShowEducationalContent(true);
   };
 
   const handleClose = () => {
@@ -172,6 +197,7 @@ export function QuestModal({ isOpen, onClose, questId, userId, onComplete }: Que
     setSelectedAnswer("");
     setUserAnswers({});
     setShowEducationalContent(true);
+    setSeenEducationalSections(new Set());
     setScore(0);
     setStartTime(null);
     onClose();
@@ -333,7 +359,12 @@ export function QuestModal({ isOpen, onClose, questId, userId, onComplete }: Que
             <div className="flex items-center space-x-3">
               {showEducationalContent ? (
                 <Button 
-                  onClick={() => setShowEducationalContent(false)}
+                  onClick={() => {
+                    setShowEducationalContent(false);
+                    // Mark this educational section as seen
+                    const sectionIndex = currentQuestionIndex === 0 ? 0 : 1;
+                    setSeenEducationalSections(prev => new Set(prev).add(sectionIndex));
+                  }}
                   className="bg-primary hover:bg-primary/90 text-primary-foreground px-6 py-2 rounded-lg font-medium"
                 >
                   Continue to Question
