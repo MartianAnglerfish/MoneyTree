@@ -387,7 +387,7 @@ export function QuestModal({ isOpen, onClose, questId, userId, onComplete }: Que
                       <h3 className={`font-bold text-lg mb-2 ${isAnswerCorrect ? 'text-emerald-700' : 'text-orange-700'}`}>
                         {isAnswerCorrect ? '✅ Correct!' : '❌ Not quite right'}
                       </h3>
-                      <p className="text-sm mb-4 text-gray-700">{answerExplanation}</p>
+                      <p className="text-sm mb-4 text-black">{answerExplanation}</p>
                       
                       {/* Auric's Feedback */}
                       <div className={`p-3 rounded-lg ${isAnswerCorrect ? 'bg-emerald-200/50' : 'bg-orange-200/50'}`}>
