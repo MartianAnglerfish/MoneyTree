@@ -107,7 +107,7 @@ export default function Dashboard() {
           <div className="flex items-center space-x-3">
             <div className="w-12 h-12 bg-gradient-to-br from-emerald-500/20 to-amber-500/20 rounded-full flex items-center justify-center relative">
               <img 
-                src="/attached_assets/DRAGON_1_1753840736082_1753972723734_1753975794455.png" 
+                src="/attached_assets/auric_logo.png" 
                 alt="Auric - MoneyTree Mascot" 
                 className="w-10 h-10 object-contain" 
               />
