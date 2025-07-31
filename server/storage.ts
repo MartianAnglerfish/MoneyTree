@@ -80,6 +80,7 @@ export class MemStorage implements IStorage {
     this.initializeQuests();
     this.initializeAchievements();
     this.initializeAuricTips();
+    this.initializeLeaderboardUsers();
   }
 
   private initializeQuests() {
@@ -290,6 +291,85 @@ export class MemStorage implements IStorage {
     tips.forEach(tip => this.auricTips.set(tip.id, tip));
   }
 
+  private initializeLeaderboardUsers() {
+    const leaderboardUsers: User[] = [
+      {
+        id: "user-2",
+        username: "dragon_master_2024",
+        displayName: "Sarah Chen",
+        email: "sarah@example.com", 
+        coins: 1200,
+        xp: 2850,
+        level: 8,
+        streak: 12,
+        lastActiveDate: new Date(),
+        createdAt: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000), // 30 days ago
+      },
+      {
+        id: "user-3", 
+        username: "treasure_hunter",
+        displayName: "Mike Rodriguez",
+        email: "mike@example.com",
+        coins: 800,
+        xp: 2100,
+        level: 7,
+        streak: 5,
+        lastActiveDate: new Date(),
+        createdAt: new Date(Date.now() - 45 * 24 * 60 * 60 * 1000), // 45 days ago
+      },
+      {
+        id: "user-4",
+        username: "financial_wizard",
+        displayName: "Emma Thompson",  
+        email: "emma@example.com",
+        coins: 600,
+        xp: 1750,
+        level: 6,
+        streak: 8,
+        lastActiveDate: new Date(),
+        createdAt: new Date(Date.now() - 20 * 24 * 60 * 60 * 1000), // 20 days ago
+      },
+      {
+        id: "user-5",
+        username: "coin_collector",
+        displayName: "James Wilson",
+        email: "james@example.com", 
+        coins: 450,
+        xp: 1350,
+        level: 5,
+        streak: 3,
+        lastActiveDate: new Date(),
+        createdAt: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000), // 15 days ago
+      },
+      {
+        id: "user-6",
+        username: "budget_boss",
+        displayName: "Lisa Park",
+        email: "lisa@example.com",
+        coins: 350,
+        xp: 950,
+        level: 4,
+        streak: 2,
+        lastActiveDate: new Date(),
+        createdAt: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000), // 10 days ago
+      },
+      {
+        id: "user-7", 
+        username: "smart_saver",
+        displayName: "David Kim",
+        email: "david@example.com",
+        coins: 200,
+        xp: 650,
+        level: 3,
+        streak: 1,
+        lastActiveDate: new Date(),
+        createdAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000), // 7 days ago
+      }
+    ];
+
+    leaderboardUsers.forEach(user => this.users.set(user.id, user));
+  }
+
   // User methods
   async getUser(id: string): Promise<User | undefined> {
     return this.users.get(id);
@@ -297,6 +377,13 @@ export class MemStorage implements IStorage {
 
   async getUserByUsername(username: string): Promise<User | undefined> {
     return Array.from(this.users.values()).find(user => user.username === username);
+  }
+
+  async getLeaderboard(): Promise<User[]> {
+    const users = Array.from(this.users.values());
+    return users
+      .sort((a, b) => (b.xp || 0) - (a.xp || 0))
+      .slice(0, 10); // Top 10 users
   }
 
   async createUser(insertUser: InsertUser): Promise<User> {

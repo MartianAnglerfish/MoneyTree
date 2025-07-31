@@ -6,6 +6,7 @@ import { Progress } from "@/components/ui/progress";
 import { AuricCompanion } from "@/components/auric-companion";
 import { QuestModal } from "@/components/quest-modal";
 import { AchievementModal } from "@/components/achievement-modal";
+import { Leaderboard } from "@/components/leaderboard";
 import type { User, Quest, UserProgress, Achievement } from "@shared/schema";
 
 export default function Dashboard() {
@@ -141,9 +142,10 @@ export default function Dashboard() {
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-6 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Left Column - Auric Companion */}
-          <div className="lg:col-span-1">
+          {/* Left Column - Auric Companion & Leaderboard */}
+          <div className="lg:col-span-1 space-y-6">
             <AuricCompanion />
+            <Leaderboard currentUserId={userId} />
           </div>
 
           {/* Right Column - Main Dashboard */}
