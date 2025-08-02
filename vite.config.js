@@ -2,13 +2,13 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import path from "path";
 import runtimeErrorOverlay from "@replit/vite-plugin-runtime-error-modal";
-import cartographerPlugin from "@replit/vite-plugin-cartographer";
+// Removed cartographer import
 
 export default defineConfig({
   plugins: [
     react(),
     runtimeErrorOverlay(),
-    cartographerPlugin(),
+    // cartographer() removed
   ],
   resolve: {
     alias: {
