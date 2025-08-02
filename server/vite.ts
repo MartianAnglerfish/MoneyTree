@@ -20,7 +20,7 @@ export function log(message: string, source = "express") {
 
 export async function setupVite(app: Express, server: Server) {
   // ✅ Move the import here
-  const viteConfig = (await import("../vite.config.mjs")).default;
+  const viteConfig = (await import("../vite.config.js")).default;
 
   const serverOptions = {
     middlewareMode: true,
