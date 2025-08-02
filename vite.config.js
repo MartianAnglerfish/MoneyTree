@@ -1,14 +1,14 @@
-import { defineConfig } from "vite";
-import react from "@vitejs/plugin-react";
-import path from "path";
-import runtimeErrorOverlay from "@replit/vite-plugin-runtime-error-modal";
-// Removed cartographer import
+// vite.config.js
+const path = require("path");
+const react = require("@vitejs/plugin-react");
+const runtimeErrorOverlay = require("@replit/vite-plugin-runtime-error-modal");
+const { cartographer } = require("@replit/vite-plugin-cartographer");
 
-export default defineConfig({
+module.exports = {
   plugins: [
     react(),
     runtimeErrorOverlay(),
-    // cartographer() removed
+    cartographer(),
   ],
   resolve: {
     alias: {
@@ -28,4 +28,4 @@ export default defineConfig({
       deny: ["**/.*"],
     },
   },
-});
+};
